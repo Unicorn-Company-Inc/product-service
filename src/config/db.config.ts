@@ -11,9 +11,7 @@ export default registerAs('database', () => {
     database: process.env.DATABASE_DATABASE,
     autoLoadEntities: true,
     synchronize: process.env.DATABASE_SYNCHRONIZE === 'true',
-    entities: [
-      process.env.NODE_ENV == 'production' ? 'dist' : 'src' + '/**/*.entity.ts',
-    ],
+    entities: ['dist/**/*.entity.ts'],
     extra: {
       ssl: process.env.DATABASE_SSL === 'true',
     },
