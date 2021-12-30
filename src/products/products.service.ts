@@ -2,8 +2,9 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ProductEntity } from './entity/product.entity';
-import * as fs from 'fs';
 import { PRODUCTS_JSON } from 'src/constants';
+import * as csv from 'fast-csv';
+import * as fs from 'fs';
 
 @Injectable()
 export class ProductsService implements OnModuleInit {
@@ -20,5 +21,18 @@ export class ProductsService implements OnModuleInit {
     });
 
     await this.productRepo.save(products);
+  }
+
+  async findAll(): Promise<ProductEntity[]> {
+    return this.productRepo.find();
+  }
+
+  async exportProducts() {
+    const products = await this.findAll();
+
+    const csvStream = csv.format({ headers: true });
+    csvStream.pipe(fs.createWriteStream('./temp/products.csv'));
+    products.forEach((p) => csvStream.write(p));
+    csvStream.end();
   }
 }
