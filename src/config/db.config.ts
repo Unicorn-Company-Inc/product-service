@@ -12,6 +12,7 @@ export default registerAs('database', () => {
     autoLoadEntities: true,
     synchronize: process.env.DATABASE_SYNCHRONIZE === 'true',
     entities: ['dist/**/*.entity.ts'],
+    dropSchema: true,
     extra: {
       ssl: process.env.DATABASE_SSL === 'true',
     },
