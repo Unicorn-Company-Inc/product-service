@@ -30,6 +30,16 @@ export const PRODUCTS_JSON = `[
     "stars": 3
   },
   {
+    "id": 3,
+    "name": "Einhorn Treats",
+    "color": "#ff0000",
+    "category": "food",
+    "description": "Leckerlies für das brave Einhorn",
+    "manufacturer": "Hornis",
+    "releaseDate": "2021-03-03",
+    "stars": 4
+  },
+  {
     "id": 4,
     "name": "Leder Sattel",
     "color": "#42fa67",

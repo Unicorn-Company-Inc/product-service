@@ -7,6 +7,7 @@ import dbConfig from './config/db.config';
 import appConfig from './config/app.config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProductsModule } from './products/products.module';
+import { StockModule } from './stock/stock.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { ProductsModule } from './products/products.module';
       inject: [ConfigService],
     }),
     ProductsModule,
+    StockModule,
   ],
   controllers: [AppController],
   providers: [AppService],
