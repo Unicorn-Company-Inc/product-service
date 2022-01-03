@@ -9,6 +9,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProductsModule } from './products/products.module';
 import { StockModule } from './stock/stock.module';
 import { CurrencyModule } from './currency/currency.module';
+import { CalculatorModule } from './calculator/calculator.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { CurrencyModule } from './currency/currency.module';
     ProductsModule,
     StockModule,
     CurrencyModule,
+    CalculatorModule,
   ],
   controllers: [AppController],
   providers: [AppService],
