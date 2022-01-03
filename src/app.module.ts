@@ -8,6 +8,7 @@ import appConfig from './config/app.config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProductsModule } from './products/products.module';
 import { StockModule } from './stock/stock.module';
+import { CurrencyModule } from './currency/currency.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { StockModule } from './stock/stock.module';
     }),
     ProductsModule,
     StockModule,
+    CurrencyModule,
   ],
   controllers: [AppController],
   providers: [AppService],

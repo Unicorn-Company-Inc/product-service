@@ -8,6 +8,7 @@ import * as fs from 'fs';
 import { StockService } from 'src/stock/stock.service';
 import { DetailedProductDto } from './dto/detailed-product.dto';
 import { StockDto } from './dto/stock.dto';
+import { CurrencyService } from 'src/currency/currency.service';
 
 @Injectable()
 export class ProductsService implements OnModuleInit {
@@ -15,6 +16,7 @@ export class ProductsService implements OnModuleInit {
     @InjectRepository(ProductEntity)
     private readonly productRepo: Repository<ProductEntity>,
     private stockService: StockService,
+    private currencyService: CurrencyService,
   ) {}
 
   async onModuleInit() {
@@ -48,7 +50,10 @@ export class ProductsService implements OnModuleInit {
     return product;
   }
 
-  async findDetailedProduct(id: number): Promise<DetailedProductDto> {
+  async findDetailedProduct(
+    id: number,
+    currency = 'EUR',
+  ): Promise<DetailedProductDto> {
     const product = await this.findOne(id);
     const stock = await this.stockService.findOne(id);
     if (!stock) {
@@ -65,11 +70,15 @@ export class ProductsService implements OnModuleInit {
       id: stock.id,
     };
 
-    const totalPrice = stock.price;
+    const totalPrice = await this.currencyService.convert(
+      stock.price,
+      currency,
+    );
 
     const detailedProductDto: DetailedProductDto = {
-      ...product,
       price: totalPrice,
+      currency,
+      ...product,
       stock: stockDto,
     };
 

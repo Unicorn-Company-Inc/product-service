@@ -1,7 +1,7 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { DetailedProductDto } from './dto/detailed-product.dto';
 import { ProductEntity } from './entity/product.entity';
-import { ProductParams } from './products.params';
+import { ProductParams, ProductQuery } from './products.params';
 import { ProductsService } from './products.service';
 
 @Controller('products')
@@ -22,8 +22,9 @@ export class ProductsController {
   @Get(':id/details')
   findDetailedProduct(
     @Param() params: ProductParams,
+    @Query() query: ProductQuery,
   ): Promise<DetailedProductDto> {
-    return this.productsService.findDetailedProduct(params.id);
+    return this.productsService.findDetailedProduct(params.id, query.currency);
   }
 
   @Get(':id')

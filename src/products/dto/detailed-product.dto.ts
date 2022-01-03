@@ -5,6 +5,10 @@ export class DetailedProductDto {
 
   name: string;
 
+  price: number;
+
+  currency: string;
+
   color: string;
 
   category: string;
@@ -16,8 +20,6 @@ export class DetailedProductDto {
   releaseDate: Date;
 
   stars: number;
-
-  price: number;
 
   stock: StockDto;
 }
