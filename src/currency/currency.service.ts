@@ -1,5 +1,9 @@
 import { HttpService } from '@nestjs/axios';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ISetupCache, setupCache } from 'axios-cache-adapter';
 
@@ -24,13 +28,17 @@ export class CurrencyService {
     const token = this.configService.get('app.currencyApiToken');
     const config = { adapter: this.cache.adapter };
 
-    const response = await this.httpService
-      .get<Response>(
-        `https://v6.exchangerate-api.com/v6/${token}/latest/EUR`,
-        config,
-      )
-      .toPromise();
-    return response.data.conversion_rates;
+    try {
+      const response = await this.httpService
+        .get<Response>(
+          `https://v6.exchangerate-api.com/v6/${token}/latest/EUR`,
+          config,
+        )
+        .toPromise();
+      return response.data.conversion_rates;
+    } catch (error) {
+      throw new InternalServerErrorException('Could not fetch currency rates');
+    }
   }
 
   async convert(amount: number, to: string): Promise<number> {
