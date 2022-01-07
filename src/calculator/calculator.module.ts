@@ -10,7 +10,7 @@ import { CalculatorService } from './calculator.service';
       useFactory: (configService: ConfigService): RabbitMQConfig => ({
         exchanges: [
           {
-            name: 'exchange1',
+            name: 'mwst',
             type: 'topic',
           },
         ],
@@ -21,5 +21,6 @@ import { CalculatorService } from './calculator.service';
     }),
   ],
   providers: [CalculatorService],
+  exports: [CalculatorService],
 })
 export class CalculatorModule {}

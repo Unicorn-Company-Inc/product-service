@@ -9,6 +9,7 @@ import { StockService } from 'src/stock/stock.service';
 import { DetailedProductDto } from './dto/detailed-product.dto';
 import { StockDto } from './dto/stock.dto';
 import { CurrencyService } from 'src/currency/currency.service';
+import { CalculatorService } from 'src/calculator/calculator.service';
 
 @Injectable()
 export class ProductsService implements OnModuleInit {
@@ -17,6 +18,7 @@ export class ProductsService implements OnModuleInit {
     private readonly productRepo: Repository<ProductEntity>,
     private stockService: StockService,
     private currencyService: CurrencyService,
+    private calculatorService: CalculatorService,
   ) {}
 
   async onModuleInit() {
@@ -69,6 +71,10 @@ export class ProductsService implements OnModuleInit {
       amount: stock.amount,
       id: stock.id,
     };
+
+    stock.price += await this.calculatorService.invokeCalculateMwst(
+      stock.price,
+    );
 
     const totalPrice = await this.currencyService.convert(
       stock.price,
