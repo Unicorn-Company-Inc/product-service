@@ -6,5 +6,6 @@ export default registerAs('app', () => {
     port: process.env.PORT,
     currencyApiToken: process.env.CURRENCY_API_TOKEN,
     rabbitmqUrl: process.env.RABBITMQ_URL,
+    storageUrl: process.env.STORAGE_URL,
   };
 });

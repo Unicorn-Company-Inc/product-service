@@ -28,6 +28,7 @@ import { CalculatorModule } from './calculator/calculator.module';
         DATABASE_SYNCHRONIZE: Joi.boolean().default(false),
         RABBITMQ_URL: Joi.string().uri().required(),
         CURRENCY_API_TOKEN: Joi.string().required(),
+        STORAGE_URL: Joi.string().uri().required(),
       }),
       load: [dbConfig, appConfig],
     }),
