@@ -1,16 +1,24 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ProductEntity } from './entity/product.entity';
 import { PRODUCTS_JSON } from 'src/constants';
 import * as csv from 'fast-csv';
 import * as fs from 'fs';
+import { StockService } from 'src/stock/stock.service';
+import { DetailedProductDto } from './dto/detailed-product.dto';
+import { StockDto } from './dto/stock.dto';
+import { CurrencyService } from 'src/currency/currency.service';
+import { CalculatorService } from 'src/calculator/calculator.service';
 
 @Injectable()
 export class ProductsService implements OnModuleInit {
   constructor(
     @InjectRepository(ProductEntity)
     private readonly productRepo: Repository<ProductEntity>,
+    private stockService: StockService,
+    private currencyService: CurrencyService,
+    private calculatorService: CalculatorService,
   ) {}
 
   async onModuleInit() {
@@ -34,5 +42,52 @@ export class ProductsService implements OnModuleInit {
     csvStream.pipe(fs.createWriteStream('./temp/products.csv'));
     products.forEach((p) => csvStream.write(p));
     csvStream.end();
+  }
+
+  async findOne(id: number): Promise<ProductEntity> {
+    const product = await this.productRepo.findOne(id);
+    if (!product) {
+      throw new NotFoundException(`Product with id ${id} not found`);
+    }
+    return product;
+  }
+
+  async findDetailedProduct(
+    id: number,
+    currency = 'EUR',
+  ): Promise<DetailedProductDto> {
+    const product = await this.findOne(id);
+    const stock = await this.stockService.findOne(id);
+    if (!stock) {
+      throw new NotFoundException(`Stock with id ${id} not found`);
+    }
+
+    const today = new Date();
+    const estDelivery = new Date();
+    estDelivery.setDate(today.getDate() + stock.deliveryTimeDays);
+
+    const stockDto: StockDto = {
+      estimatedDelivery: estDelivery,
+      amount: stock.amount,
+      id: stock.id,
+    };
+
+    stock.price += await this.calculatorService.invokeCalculateMwst(
+      stock.price,
+    );
+
+    const totalPrice = await this.currencyService.convert(
+      stock.price,
+      currency,
+    );
+
+    const detailedProductDto: DetailedProductDto = {
+      price: totalPrice,
+      currency,
+      ...product,
+      stock: stockDto,
+    };
+
+    return detailedProductDto;
   }
 }

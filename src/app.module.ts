@@ -7,6 +7,9 @@ import dbConfig from './config/db.config';
 import appConfig from './config/app.config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProductsModule } from './products/products.module';
+import { StockModule } from './stock/stock.module';
+import { CurrencyModule } from './currency/currency.module';
+import { CalculatorModule } from './calculator/calculator.module';
 
 @Module({
   imports: [
@@ -23,6 +26,9 @@ import { ProductsModule } from './products/products.module';
         DATABASE_DATABASE: Joi.string().required(),
         DATABASE_SSL: Joi.boolean().default(true),
         DATABASE_SYNCHRONIZE: Joi.boolean().default(false),
+        RABBITMQ_URL: Joi.string().uri().required(),
+        CURRENCY_API_TOKEN: Joi.string().required(),
+        STORAGE_URL: Joi.string().uri().required(),
       }),
       load: [dbConfig, appConfig],
     }),
@@ -34,6 +40,9 @@ import { ProductsModule } from './products/products.module';
       inject: [ConfigService],
     }),
     ProductsModule,
+    StockModule,
+    CurrencyModule,
+    CalculatorModule,
   ],
   controllers: [AppController],
   providers: [AppService],
