@@ -10,6 +10,10 @@ import { ProductsModule } from './products/products.module';
 import { StockModule } from './stock/stock.module';
 import { CurrencyModule } from './currency/currency.module';
 import { CalculatorModule } from './calculator/calculator.module';
+import { OgmaInterceptor, OgmaModule } from '@ogma/nestjs-module';
+import { ExpressParser } from '@ogma/platform-express';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { appendFile } from 'fs';
 
 @Module({
   imports: [
@@ -39,12 +43,40 @@ import { CalculatorModule } from './calculator/calculator.module';
       }),
       inject: [ConfigService],
     }),
+    OgmaModule.forRootAsync({
+      useFactory: (config: ConfigService) => ({
+        service: {
+          color: false,
+          json: true,
+          application: 'ProductService',
+          stream: {
+            write: (message: any) => {
+              appendFile('./logs/product-service.log', message, (err) => {
+                if (err) {
+                  throw err;
+                }
+                return true;
+              });
+            },
+          },
+        },
+        interceptor: {
+          http: ExpressParser,
+        },
+      }),
+    }),
     ProductsModule,
     StockModule,
     CurrencyModule,
     CalculatorModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: OgmaInterceptor,
+    },
+  ],
 })
 export class AppModule {}
