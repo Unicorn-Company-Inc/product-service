@@ -10,6 +10,7 @@ async function bootstrap() {
   app.useLogger(logger);
 
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
+  app.setGlobalPrefix('product');
 
   const config = app.get<ConfigService>(ConfigService);
   const port = config.get('app.port');
