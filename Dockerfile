@@ -20,6 +20,8 @@ WORKDIR /home/node
 
 COPY --from=builder /home/node/node_modules/ /home/node/node_modules/
 COPY --from=builder /home/node/dist/ /home/node/dist/
+RUN mkdir /home/node/logs
+RUN mkdir /home/node/temp
 
 EXPOSE 3001
 
